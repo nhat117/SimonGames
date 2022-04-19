@@ -13,7 +13,7 @@ function start() {
         console.log(userClickedPattern);
         playSound(userChoosenColor);
         animatePress(userChoosenColor);
-        checkAnswer(userClickedPattern.length -1);
+        checkAnswer(userClickedPattern.length - 1);
     });
 
     $("body").on('keypress', (e) => {
@@ -45,15 +45,25 @@ function nextSequence() {
     userClickedPattern = []
     let randNum = Math.floor(Math.random() * 4);
     let randomChoosenColor = buttonColor[randNum];
-    let btn = $(`#${randomChoosenColor}`).fadeIn(100).fadeOut(100).fadeIn(100);
 
     gamePattern.push(randomChoosenColor)
+    renderGamePattern(gamePattern);
 
+    $("#level-title").text("Level " + level);
+    level++;
+}
+//Need to have space between each flash
+function renderGamePattern(arr){
+    if (arr.length === 0 ){
+        return;
+    }
+    let btn = $(`#${arr[0]}`).fadeIn(100).fadeOut(100).fadeIn(100);
     $("body").click(() => {
         playSound(btn.attr('id'));
     });
-    $("#level-title").text("Level " + level);
-    level++;
+    setTimeout(()=>{
+         renderGamePattern(arr.slice(1));
+    },400);
 }
 
 function checkAnswer(currentLevel) {
@@ -69,7 +79,9 @@ function checkAnswer(currentLevel) {
         console.log(false);
         playSound("wrong");
         $("body").addClass("game-over");
-        setTimeout(()=>{$("body").removeClass("game-over");},200);
+        setTimeout(() => {
+            $("body").removeClass("game-over");
+        }, 200);
         $("#level-title").text("Game Over, Press Any Key To Restart");
         startOver();
     }
